@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace colekta_api.Helpers;
@@ -44,5 +46,34 @@ public static class ValidationUtils
         dg = dg + resto.ToString();
 
         return cpf.EndsWith(dg);
+    }
+    
+    public static string GenerateUserName(string nomeCompleto)
+    {
+        if (string.IsNullOrWhiteSpace(nomeCompleto))
+            return string.Empty;
+
+        string firstName = nomeCompleto
+            .Trim()
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .FirstOrDefault() ?? "";
+
+        string normalized = firstName.Normalize(NormalizationForm.FormD);
+        var sb = new StringBuilder();
+
+        foreach (var c in normalized)
+        {
+            var unicodeCategory = Char.GetUnicodeCategory(c);
+            if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+            {
+                sb.Append(c);
+            }
+        }
+
+        string noAccents = sb.ToString().Normalize(NormalizationForm.FormC);
+
+        string userName = Regex.Replace(noAccents, @"[^a-zA-Z0-9]", "");
+
+        return userName;
     }
 }
