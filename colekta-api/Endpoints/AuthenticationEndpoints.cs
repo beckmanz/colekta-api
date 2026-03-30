@@ -31,5 +31,11 @@ public static class AuthenticationEndpoints
             }
             return result;
         }).WithName("Register");
+        
+        group.MapPost("logout", (HttpContext httpContext) =>
+        {
+            httpContext.Response.Cookies.Delete("ColektaAccessToken");
+            return Results.Ok(new { Message = "Logout successful" });
+        }).WithName("Logout");
     }
 }
