@@ -1,5 +1,13 @@
 using colekta_api.Data;
+using colekta_api.Endpoints;
+using colekta_api.Extensions;
+using colekta_api.Middlewares;
+using colekta_api.Models.Entities;
+using colekta_api.Services.Authentication;
+using colekta_api.Services.Token;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,13 +17,29 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddIdentityCore<ApplicationUserModel>()
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddJwtAuthentication(builder.Configuration);
+
+builder.Services.AddScoped<IAuthenticationInterface, AuthenticationService>();
+builder.Services.AddScoped<ITokenInterface, TokenService>();
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
+
+await DbInitializer.SeedRolesAsync(app.Services);
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
-
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapAuthenticationEndpoints();
 app.UseHttpsRedirection();
 app.Run();
