@@ -27,6 +27,14 @@ public static class JwtAuthenticationExtensions
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(configuration["Jwt:Key"] ?? string.Empty))
                 };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        context.Token = context.Request.Cookies["ColektaAccessToken"];
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
         return services;
