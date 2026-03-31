@@ -8,7 +8,8 @@ public static class AuthenticationEndpoints
 {
     public static void MapAuthenticationEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/auth").WithTags("Authentication");
+        var group = app.MapGroup("/api/auth")
+            .WithTags("Authentication");
         
         group.MapPost("register", async (
             [FromBody] RegisterDto request,
@@ -30,12 +31,16 @@ public static class AuthenticationEndpoints
 
             }
             return result;
-        }).WithName("Register");
+        }).WithName("Register")
+        .WithSummary("Registra um novo usuário")
+        .WithDescription("Cria um novo usuário na plataforma e retorna um token de autenticação via cookie.");
         
         group.MapPost("logout", (HttpContext httpContext) =>
         {
             httpContext.Response.Cookies.Delete("ColektaAccessToken");
             return Results.Ok(new { Message = "Logout successful" });
-        }).WithName("Logout");
+        }).WithName("Logout")
+        .WithSummary("Realiza logout do usuário")
+        .WithDescription("Remove o cookie de autenticação para efetuar o logout do usuário.");
     }
 }
