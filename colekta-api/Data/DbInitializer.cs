@@ -6,16 +6,27 @@ public static class DbInitializer
     public static async Task SeedRolesAsync(IServiceProvider serviceProvider)
     {
         using var scope = serviceProvider.CreateScope();
-        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<ApplicationDbContext>>();
 
-        string[] roles = { "Admin", "Vendedor", "Cliente" };
-
-        foreach (var roleName in roles)
+        try
         {
-            if (!await roleManager.RoleExistsAsync(roleName))
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+            string[] roles = { "Admin", "Vendedor", "Cliente" };
+
+            foreach (var roleName in roles)
             {
-                await roleManager.CreateAsync(new IdentityRole(roleName));
+                if (!await roleManager.RoleExistsAsync(roleName))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(roleName));
+                }
             }
+
+            logger.LogInformation("Roles inicializadas com sucesso.");
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Não foi possível inicializar as roles. A aplicação continuará sem o seed inicial.");
         }
     }
 }
