@@ -7,7 +7,6 @@ using colekta_api.Services.Authentication;
 using colekta_api.Services.Token;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,18 +25,16 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddScoped<IAuthenticationInterface, AuthenticationService>();
 builder.Services.AddScoped<ITokenInterface, TokenService>();
 builder.Services.AddAuthorization();
+builder.Services.AddColektaCors(builder.Configuration);
+builder.Services.AddColektaDocumentation();
 
 var app = builder.Build();
 
 await DbInitializer.SeedRolesAsync(app.Services);
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.MapScalarApiReference();
-}
+app.UseColektaDocumentation();
+app.UseColektaCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapAuthenticationEndpoints();
