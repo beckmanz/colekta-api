@@ -64,17 +64,35 @@ public class AuthenticationService : IAuthenticationInterface
         await _userManager.AddToRoleAsync(user, "Cliente");
         var roles = new List<string> { "Cliente" };
         var token = _tokenService.GenerateJwtToken(user, roles);
-        var response = new AuthResponseDto()
-        {
-            Id = user.Id,
-            NomeCompleto = user.FullName,
-            UserName = user.UserName,
-            Email = user.Email
-        }; 
+        var response = AuthResponseDto.ToAuthResponseDto(user);
+        response.Roles = roles;
+        
         var httpResult = response.ToCreatedResult(
             location: "/api/Authentication/me",
             message: "Usuário registrado com sucesso!");
 
+        return (httpResult, token);
+    }
+
+    public async Task<(IResult Result, string? Token)> LoginUserAsync(LoginDto loginDto)
+    {
+        var user = await _userManager.FindByEmailAsync(loginDto.Email);
+        if (user is null)
+        {
+            return ("Credenciais inválidas.".ToUnauthorizedResult(), null);
+        }
+        
+        if(!_userManager.CheckPasswordAsync(user, loginDto.Senha).Result)
+        {
+            return ("Credenciais inválidas.".ToUnauthorizedResult(), null);
+        }
+
+        var response = AuthResponseDto.ToAuthResponseDto(user);
+        var userRoles = await _userManager.GetRolesAsync(user);
+        response.Roles = userRoles.ToList();
+        
+        var httpResult = response.ToOkResult("Login realizado com sucesso!");
+        var token = _tokenService.GenerateJwtToken(user, userRoles.ToList());
         return (httpResult, token);
     }
 }
