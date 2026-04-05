@@ -28,6 +28,22 @@ public static class AuthenticationEndpoints
         .WithSummary("Registra um novo usuário")
         .WithDescription("Cria um novo usuário na plataforma e retorna um token de autenticação via cookie.");
         
+        group.MapPost("login", async (
+            [FromBody] LoginDto request,
+            IAuthenticationInterface authInterface,
+            HttpContext httpContext,
+            ITokenInterface tokenInterface) =>
+        {
+            var (result, token) = await authInterface.LoginUserAsync(request);
+            if (token is not null)
+            {
+                tokenInterface.SetCookieTokenJwt(httpContext, token);
+            }
+            return result;
+        }).WithName("Login")
+        .WithSummary("Loga um usuário")
+        .WithDescription("Faz o login de um usuário na plataforma e retorna um token de autenticação via cookie.");
+        
         group.MapPost("logout", (HttpContext httpContext) =>
         {
             httpContext.Response.Cookies.Delete("ColektaAccessToken");
