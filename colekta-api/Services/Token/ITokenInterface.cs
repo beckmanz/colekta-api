@@ -5,4 +5,5 @@ namespace colekta_api.Services.Token;
 public interface ITokenInterface
 { 
     string GenerateJwtToken(ApplicationUserModel user, List<string> roles);
+    void SetCookieTokenJwt(HttpContext httpContext, string token);
 }

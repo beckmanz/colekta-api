@@ -42,4 +42,17 @@ public class TokenService : ITokenInterface
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
+    public void SetCookieTokenJwt(HttpContext httpContext, string token)
+    {
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.UtcNow.AddHours(8)
+        };
+
+        httpContext.Response.Cookies.Append("ColektaAccessToken", token, cookieOptions);
+    }
 }
