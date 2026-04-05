@@ -72,8 +72,9 @@ public static class ValidationUtils
 
         string noAccents = sb.ToString().Normalize(NormalizationForm.FormC);
 
-        string userName = Regex.Replace(noAccents, @"[^a-zA-Z0-9]", "");
-
+        string baseUserName = Regex.Replace(noAccents, @"[^a-zA-Z0-9]", "");
+        string userName = baseUserName + Guid.NewGuid().ToString("N").Substring(0, 6);
+        
         return userName;
     }
 }

@@ -32,6 +32,20 @@ public class AuthenticationService : IAuthenticationInterface
         }
 
         var userName = ValidationUtils.GenerateUserName(registerDto.NomeCompleto);
+        Boolean genSlug = true;
+
+        while (genSlug)
+        {
+            var slug = await _userManager.FindByNameAsync(userName);
+            if (slug is not null)
+            {
+                userName = ValidationUtils.GenerateUserName(registerDto.NomeCompleto); 
+            }
+            else
+            {
+                genSlug = false;
+            }
+        }
         
         var user = new ApplicationUserModel()
         {
