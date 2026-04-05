@@ -5,7 +5,7 @@ namespace colekta_api.Extensions;
 
 public static class ScalarExtensions
 {
-    public static IServiceCollection AddColektaDocumentation(this IServiceCollection services)
+    public static IServiceCollection AddColektaDocumentation(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddOpenApi(options =>
         {
@@ -16,6 +16,14 @@ public static class ScalarExtensions
                 document.Info.Description = "Plataforma de e-commerce para colecionáveis e raridades.";
 
                 document.Components ??= new OpenApiComponents();
+                
+                var apiUrl = configuration.GetSection("ColektaApiServer:Url").Value;
+                var description = configuration.GetSection("ColektaApiServer:Description").Value;
+                if (apiUrl is not null && description is not null)
+                {
+                    document.Servers?.Clear();
+                    document.Servers?.Add(new OpenApiServer { Url = apiUrl, Description = description });
+                }
 
                 document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
 
@@ -52,7 +60,7 @@ public static class ScalarExtensions
         if (app is IEndpointRouteBuilder endpointApp)
         {
             endpointApp.MapOpenApi();
-            endpointApp.MapScalarApiReference(options =>
+            endpointApp.MapScalarApiReference("docs",options =>
             {
                 options
                     .WithTitle("Colekta API - Docs")

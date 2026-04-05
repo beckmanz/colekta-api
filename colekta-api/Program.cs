@@ -26,10 +26,13 @@ builder.Services.AddScoped<IAuthenticationInterface, AuthenticationService>();
 builder.Services.AddScoped<ITokenInterface, TokenService>();
 builder.Services.AddAuthorization();
 builder.Services.AddColektaCors(builder.Configuration);
-builder.Services.AddColektaDocumentation();
+builder.Services.AddColektaDocumentation(builder.Configuration);
 
 var app = builder.Build();
-
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+}
 await DbInitializer.SeedRolesAsync(app.Services);
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
