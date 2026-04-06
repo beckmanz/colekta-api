@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using colekta_api.Helpers;
 using colekta_api.Models.Entities;
 using colekta_api.Models.RequestDtos;
@@ -94,5 +95,25 @@ public class AuthenticationService : IAuthenticationInterface
         var httpResult = response.ToOkResult("Login realizado com sucesso!");
         var token = _tokenService.GenerateJwtToken(user, userRoles.ToList());
         return (httpResult, token);
+    }
+
+    public async Task<IResult> GetCurrentUserAsync(ClaimsPrincipal userClaims)
+    {
+        var userId = userClaims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId is null)
+        {
+            return "".ToUnauthorizedResult();
+        }
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+        {
+            return "".ToUnauthorizedResult();
+        }
+        
+        var response = AuthResponseDto.ToAuthResponseDto(user);
+        var userRoles = await _userManager.GetRolesAsync(user);
+        response.Roles = userRoles.ToList();
+        
+        return response.ToOkResult();
     }
 }
