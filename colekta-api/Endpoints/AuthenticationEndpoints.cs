@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using colekta_api.Models.RequestDtos;
 using colekta_api.Services.Authentication;
 using colekta_api.Services.Token;
@@ -43,6 +44,16 @@ public static class AuthenticationEndpoints
         }).WithName("Login")
         .WithSummary("Loga um usuário")
         .WithDescription("Faz o login de um usuário na plataforma e retorna um token de autenticação via cookie.");
+
+        group.MapGet("me", async (
+            IAuthenticationInterface authInterface,
+            ClaimsPrincipal userClaims) =>
+        {
+            var result = await authInterface.GetCurrentUserAsync(userClaims);
+            return result;
+        }).WithName("Me")
+        .WithSummary("Retorna as informações do usuário autenticado")
+        .WithDescription("Retorna as informações do usuário atualmente autenticado com base no token de autenticação presente no cookie.");
         
         group.MapPost("logout", (HttpContext httpContext) =>
         {
