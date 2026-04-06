@@ -43,7 +43,13 @@ public static class ScalarExtensions
                     { 
                         Name = "Authentication", 
                         Description = "Endpoints relacionados à autenticação de usuários, incluindo login, registro e logout." 
-                    }
+                    },
+                    new OpenApiTag 
+                    { 
+                        Name = "Products", 
+                        Description = "Endpoints relacionados à gestão de produtos, incluindo listagem, detalhes, criação, atualização e exclusão de produtos." 
+                    },
+                    
                 };
 
                 return Task.CompletedTask;
