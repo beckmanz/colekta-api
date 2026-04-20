@@ -6,5 +6,6 @@ namespace colekta_api.Repositories.Interfaces;
 
 public interface IProductRepository
 {
-    Task<PagedResponseDto<ProductModel>> GetAllProductsAsync(ProductFilterDto filters);
+    IQueryable<ProductModel> GetProductsQuery(ProductFilterDto filters);
+    Task<ProductModel> CreateProductAsync(ProductModel product);
 }
