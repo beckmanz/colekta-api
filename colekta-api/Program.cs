@@ -6,6 +6,7 @@ using colekta_api.Models.Entities;
 using colekta_api.Repositories;
 using colekta_api.Repositories.Interfaces;
 using colekta_api.Services.Authentication;
+using colekta_api.Services.File;
 using colekta_api.Services.Product;
 using colekta_api.Services.Token;
 using Microsoft.AspNetCore.Identity;
@@ -27,11 +28,17 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 
 builder.Services.AddScoped<IAuthenticationInterface, AuthenticationService>();
 builder.Services.AddScoped<ITokenInterface, TokenService>();
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ElevatedRights", policy => policy.RequireRole("Admin", "Creator"));
+    options.AddPolicy("Admin", policy => policy.RequireRole("Vendedor", "Admin"));
+});
 builder.Services.AddColektaCors(builder.Configuration);
 builder.Services.AddColektaDocumentation(builder.Configuration);
 builder.Services.AddScoped<IProductInterface, ProductService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IFileInterface, FileService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 var app = builder.Build();
 if (!app.Environment.IsDevelopment())
