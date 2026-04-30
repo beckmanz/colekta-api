@@ -31,7 +31,7 @@ builder.Services.AddScoped<ITokenInterface, TokenService>();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("ElevatedRights", policy => policy.RequireRole("Admin", "Creator"));
-    options.AddPolicy("Admin", policy => policy.RequireRole("Vendedor", "Admin"));
+    options.AddPolicy("Common", policy => policy.RequireRole("Vendedor", "Admin", "Creator"));
 });
 builder.Services.AddColektaCors(builder.Configuration);
 builder.Services.AddColektaDocumentation(builder.Configuration);

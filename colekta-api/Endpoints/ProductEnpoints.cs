@@ -13,8 +13,7 @@ public static class ProductEnpoints
     {
         var group = app.MapGroup("/api/products")
             .WithTags("Products")
-            .RequireAuthorization("Admin")
-            .RequireAuthorization("ElevatedRights");
+            .RequireAuthorization("Common");
 
         group.MapGet("/", async (IProductInterface productService, [AsParameters] ProductFilterDto filter) =>
             {
