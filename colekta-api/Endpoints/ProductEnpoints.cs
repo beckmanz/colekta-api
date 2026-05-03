@@ -1,8 +1,8 @@
 using System.Security.Claims;
+using colekta_api.Filters;
 using colekta_api.Models.FiltersDto;
 using colekta_api.Models.RequestDtos;
 using colekta_api.Services.Product;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace colekta_api.Endpoints;
@@ -30,6 +30,7 @@ public static class ProductEnpoints
                 var result = await productService.CreateProductAsync(product, user);
                 return result;
             }).DisableAntiforgery()
+            .AddEndpointFilter<MultipartValidationFilter<CreateProductDto>>()
             .WithName("CreateProduct")
             .WithSummary("Cria um novo produto")
             .WithDescription(
