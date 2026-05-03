@@ -1,3 +1,4 @@
+using colekta_api.Models.FiltersDto;
 using colekta_api.Models.ResponseDtos;
 using colekta_api.Models.ResultsModel;
 using colekta_api.Repositories.Interfaces;
@@ -14,26 +15,26 @@ public class CategoryService : ICategoryInterface
         _categoryRepository = categoryRepository;
     }
 
-    public async Task<IResult> GetAllCategories(int  Page, int PageSize)
+    public async Task<IResult> GetAllCategories(CategoryFilterDto filter)
     {
-        var query = _categoryRepository.GetAllAsync();
+        var query = _categoryRepository.GetAllAsync(filter);
         
         var totalItems = await query.CountAsync();
-        var itemsToSkip = (Page - 1) * PageSize;
+        var itemsToSkip = (filter.Page - 1) * filter.PageSize;
         
         var categories = await query.Skip(itemsToSkip)
-            .Take(PageSize)
+            .Take(filter.PageSize)
             .ToListAsync();
         
         var itemsDto = categories
             .Select(c => CategoryResponseDto.ToDto(c)).ToList();
         
-        var totalPages = (int)Math.Ceiling((double)totalItems / PageSize);
+        var totalPages = (int)Math.Ceiling((double)totalItems / filter.PageSize);
         
         var response = new PagedResponseDto<CategoryResponseDto>(
             Items: itemsDto,
             TotalItems: totalItems,
-            CurrentPage: Page,
+            CurrentPage: filter.Page,
             TotalPages: totalPages
         );
         

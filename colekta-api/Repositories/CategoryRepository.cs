@@ -1,5 +1,6 @@
 using colekta_api.Data;
 using colekta_api.Models.Entities;
+using colekta_api.Models.FiltersDto;
 using colekta_api.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,9 +23,19 @@ public class CategoryRepository : ICategoryRepository
         return category;
     }
 
-    public IQueryable<CategoryModel> GetAllAsync()
+    public IQueryable<CategoryModel> GetAllAsync(CategoryFilterDto filter)
     {
-        return _context.Categories.AsNoTracking().AsQueryable();
+        var query = _context.Categories
+            .AsNoTracking()
+            .AsQueryable();
+        
+        if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
+        {
+            var search = filter.SearchTerm.ToLower();
+            query = query.Where(p => p.Name.ToLower().Contains(search));
+        }
+        
+        return query;
     }
 
     public Task<CategoryModel> CreateCategoryAsync(CategoryModel categoryModel)

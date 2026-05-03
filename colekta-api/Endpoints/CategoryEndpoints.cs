@@ -1,3 +1,4 @@
+using colekta_api.Models.FiltersDto;
 using colekta_api.Services.Category;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,9 +11,9 @@ public static class CategoryEndpoints
         var group = app.MapGroup("/api/categories")
             .WithTags("Categories");
         
-        group.MapGet("", async (ICategoryInterface categoryInterface, int Page = 1, int PageSize = 12) =>
+        group.MapGet("", async (ICategoryInterface categoryInterface, [AsParameters] CategoryFilterDto filter) =>
         {
-            var result = await categoryInterface.GetAllCategories(Page, PageSize);
+            var result = await categoryInterface.GetAllCategories(filter);
             return result;
         }).WithName("GetAllCategories")
         .WithSummary("Lista todas as categorias")
