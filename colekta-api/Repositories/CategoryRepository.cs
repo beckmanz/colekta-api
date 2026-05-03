@@ -21,4 +21,16 @@ public class CategoryRepository : ICategoryRepository
 
         return category;
     }
+
+    public IQueryable<CategoryModel> GetAllAsync()
+    {
+        return _context.Categories.AsNoTracking().AsQueryable();
+    }
+
+    public Task<CategoryModel> CreateCategoryAsync(CategoryModel categoryModel)
+    {
+        _context.Categories.Add(categoryModel);
+        return _context.SaveChangesAsync()
+            .ContinueWith(_ => categoryModel);
+    }
 }
