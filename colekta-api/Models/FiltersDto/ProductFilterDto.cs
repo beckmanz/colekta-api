@@ -8,13 +8,14 @@ namespace colekta_api.Models.FiltersDto;
 /// <param name="MaxPrice">Preço máximo para filtrar produtos (opcional).</param>
 /// <param name="CategoryId">ID da categoria para filtrar produtos (opcional).</param>
 /// <param name="SortBy">Campo para ordenação (ex: "price_asc", "price_desc") (opcional).</param>
+/// <param name="IncludeDeleted">Campo para decidir a inclusão de produtos deletados ou não.</param>
 /// <param name="Page">Número da página para paginação (padrão: 1).</param>
 /// <param name="PageSize">Número de itens por página (padrão: 12).</param>
 public record ProductFilterDto(
     string? SearchTerm = null,
     decimal? MinPrice = null,
     decimal? MaxPrice = null,
-    string? CategoryId = null,
+    Guid? CategoryId = null,
     string? SortBy = null,
     bool IncludeDeleted = false,
     int Page = 1,

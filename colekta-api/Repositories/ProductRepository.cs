@@ -31,6 +31,11 @@ public class ProductRepository : IProductRepository
             query = query.Where(p => p.Name.ToLower().Contains(search) 
                                      || p.Description.ToLower().Contains(search));
         }
+
+        if (filters.CategoryId is not null)
+        {
+            query = query.Where(p => p.CategoryId == filters.CategoryId);
+        }
     
         if (filters.MinPrice.HasValue)
             query = query.Where(p => p.Price >= filters.MinPrice.Value);
