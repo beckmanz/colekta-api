@@ -77,4 +77,31 @@ public static class ValidationUtils
         
         return userName;
     }
+
+    public static string ToSlug(this string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return string.Empty;
+
+        string normalizedString = text.Normalize(NormalizationForm.FormD);
+
+        StringBuilder sb = new StringBuilder();
+
+        foreach (char c in normalizedString)
+        {
+            UnicodeCategory category = CharUnicodeInfo.GetUnicodeCategory(c);
+            if (category != UnicodeCategory.NonSpacingMark)
+            {
+                sb.Append(c);
+            }
+        }
+
+        string result = sb.ToString().Normalize(NormalizationForm.FormC).ToLowerInvariant();
+
+        result = Regex.Replace(result, @"[^a-z0-9\s-]", "");
+
+        result = Regex.Replace(result, @"[\s-]+", "-").Trim('-');
+
+        return result;
+    }
 }
