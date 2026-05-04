@@ -1,3 +1,5 @@
+using colekta_api.Helpers;
+using colekta_api.Models.Entities;
 using colekta_api.Models.FiltersDto;
 using colekta_api.Models.ResponseDtos;
 using colekta_api.Models.ResultsModel;
@@ -39,5 +41,24 @@ public class CategoryService : ICategoryInterface
         );
         
         return response.ToOkResult("Categorias listadas com sucesso");
+    }
+
+    public async Task<IResult> CreateCategoryAsync(string nome)
+    {
+        var nomeExist = await _categoryRepository.GetByNameAsync(nome);
+        if (nomeExist is not null)
+        {
+            return "Já existe uma categoria com esse nome!".ToBadRequestResult();
+        }
+        
+        var category = new CategoryModel
+        {
+            Name = nome,
+            Slug = ValidationUtils.ToSlug(nome)
+        };
+        await _categoryRepository.CreateCategoryAsync(category);
+        var response = CategoryResponseDto.ToDto(category);
+        
+        return response.ToOkResult("Categoria criada com sucesso");
     }
 }

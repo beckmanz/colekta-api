@@ -38,10 +38,16 @@ public class CategoryRepository : ICategoryRepository
         return query;
     }
 
-    public Task<CategoryModel> CreateCategoryAsync(CategoryModel categoryModel)
+    public async Task<CategoryModel?> GetByNameAsync(string name)
+    {
+        return await _context.Categories.AsNoTracking()
+            .FirstOrDefaultAsync(c => c.Name.ToLower() == name.ToLower());
+    }
+
+    public async Task<CategoryModel> CreateCategoryAsync(CategoryModel categoryModel)
     {
         _context.Categories.Add(categoryModel);
-        return _context.SaveChangesAsync()
+        return await _context.SaveChangesAsync()
             .ContinueWith(_ => categoryModel);
     }
 }
