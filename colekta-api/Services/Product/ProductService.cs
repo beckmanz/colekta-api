@@ -112,8 +112,9 @@ public class ProductService : IProductInterface
             return "Produto não encontrado!".ToNotFoundResult();
         }
         
-        var response = ProductResponseDto.ToDto(product);
+        var productDto = ProductResponseDto.ToDto(product);
+        productDto.Seller = SellerResponseDto.ToDto(product.Seller);
         
-        return response.ToOkResult("Produto buscado com sucesso!");
+        return productDto.ToOkResult("Produto buscado com sucesso!");
     }
 }

@@ -12,6 +12,7 @@ public class ProductResponseDto()
     public bool IsDeleted { get; set; }
     public Guid CategoriaId { get; set; }
     public string SellerId { get; set; }
+    public SellerResponseDto? Seller { get; set; }
     public List<ProductImageResponseDto> Imagens { get; set; } = new List<ProductImageResponseDto>();
 
     public static ProductResponseDto ToDto(ProductModel product)
