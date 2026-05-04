@@ -50,4 +50,15 @@ public class ProductRepository : IProductRepository
         return _context.SaveChangesAsync()
             .ContinueWith(t => product);
     }
+
+    public async Task<ProductModel> GetProductByIdAsync(Guid Id)
+    {
+        var result = await _context.Products
+            .Include(p => p.Images)
+            .Include(p => p.Seller)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Id == Id);
+
+        return result;
+    }
 }

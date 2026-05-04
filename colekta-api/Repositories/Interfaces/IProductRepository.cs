@@ -8,4 +8,5 @@ public interface IProductRepository
 {
     IQueryable<ProductModel> GetProductsQuery(ProductFilterDto filters);
     Task<ProductModel> CreateProductAsync(ProductModel product);
+    Task<ProductModel> GetProductByIdAsync(Guid Id);
 }
