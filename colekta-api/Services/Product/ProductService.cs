@@ -99,4 +99,17 @@ public class ProductService : IProductInterface
         
         return response.ToOkResult("Produto cadastrado com sucesso!");
     }
+
+    public async Task<IResult> GetProductById(Guid Id)
+    {
+        var product = await _productRepository.GetProductByIdAsync(Id);
+        if (product is null)
+        {
+            return "Produto não encontrado!".ToNotFoundResult();
+        }
+        
+        var response = ProductResponseDto.ToDto(product);
+        
+        return response.ToOkResult("Produto buscado com sucesso!");
+    }
 }

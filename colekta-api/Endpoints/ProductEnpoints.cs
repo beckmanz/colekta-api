@@ -35,6 +35,16 @@ public static class ProductEnpoints
             .WithSummary("Cria um novo produto")
             .WithDescription(
                 "Cria um novo produto com base nos dados fornecidos. O usuário deve ser autenticado e ter a função de 'Admin' ou 'Vendedor' para criar um produto.");
-        
+
+        group.MapGet("/{Id}", async (IProductInterface productService, Guid Id) =>
+        {
+            var result = await productService.GetProductById(Id);
+            return result;
+        }).DisableAntiforgery().WithName("GetProductById")
+        .WithSummary("Retorna um produto por ID")
+        .WithDescription(
+            "Retorna um produto com base no ID fornecido. O ID deve ser um GUID válido.")
+        .AllowAnonymous();
+
     }
 }
