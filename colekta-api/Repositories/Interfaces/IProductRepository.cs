@@ -6,7 +6,7 @@ namespace colekta_api.Repositories.Interfaces;
 
 public interface IProductRepository
 {
-    IQueryable<ProductModel> GetProductsQuery(ProductFilterDto filters);
+    IQueryable<ProductModel> GetAllProductsQuery(ProductFilterDto filters, bool includeDeleted);
     Task<ProductModel> CreateProductAsync(ProductModel product);
     Task<ProductModel> GetProductByIdAsync(Guid Id);
 }

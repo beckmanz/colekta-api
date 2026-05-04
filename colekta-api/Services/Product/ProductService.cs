@@ -26,9 +26,13 @@ public class ProductService : IProductInterface
         _categoryRepository = categoryRepository;
     }
 
-    public async Task<IResult> GetAllProductAsync(ProductFilterDto filters)
+    public async Task<IResult> GetAllProductAsync(ProductFilterDto filters, ClaimsPrincipal userClaims)
     {
-        var query = _productRepository.GetProductsQuery(filters);
+        var isAdmin = userClaims.IsInRole("Admin");
+        var isCreator = userClaims.IsInRole("Creator");
+        var includeDeleted = (isAdmin || isCreator) && filters.IncludeDeleted;
+        
+        var query = _productRepository.GetAllProductsQuery(filters, includeDeleted);
 
         var totalItems = await query.CountAsync();
     

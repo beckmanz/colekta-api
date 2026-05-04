@@ -17,10 +17,11 @@ public class ProductRepository : IProductRepository
         _context = context;
     }
 
-    public IQueryable<ProductModel> GetProductsQuery(ProductFilterDto filters)
+    public IQueryable<ProductModel> GetAllProductsQuery(ProductFilterDto filters, bool includeDeleted)
     {
         var query = _context.Products
             .Include( p => p.Images)
+            .Where(p => includeDeleted || !p.IsDelete)
             .AsNoTracking()
             .AsQueryable();
 

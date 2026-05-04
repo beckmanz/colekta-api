@@ -16,6 +16,7 @@ public record ProductFilterDto(
     decimal? MaxPrice = null,
     string? CategoryId = null,
     string? SortBy = null,
+    bool IncludeDeleted = false,
     int Page = 1,
     int PageSize = 12
     );

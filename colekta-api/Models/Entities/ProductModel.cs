@@ -8,6 +8,7 @@ public class ProductModel
     public decimal Price { get; set; }
     public int Stock { get; set; }
     public string Condition { get; set; } = string.Empty;
+    public bool IsDelete { get; set; } = false;
 
     public virtual ICollection<ProductImageModel> Images { get; set; } = new List<ProductImageModel>();
 

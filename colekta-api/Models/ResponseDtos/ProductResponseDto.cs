@@ -9,6 +9,7 @@ public class ProductResponseDto()
     public string Descricao { get; set; }
     public decimal Preco { get; set; }
     public int Estoque { get; set; }
+    public bool IsDeleted { get; set; }
     public Guid CategoriaId { get; set; }
     public string SellerId { get; set; }
     public List<ProductImageResponseDto> Imagens { get; set; } = new List<ProductImageResponseDto>();
@@ -22,6 +23,7 @@ public class ProductResponseDto()
             Descricao = product.Description,
             Estoque = product.Stock,
             Preco = product.Price,
+            IsDeleted = product.IsDelete,
             CategoriaId = product.CategoryId,
             SellerId = product.SellerId,
             Imagens = product.Images.Select(img => ProductImageResponseDto.ToDto(img)).ToList()

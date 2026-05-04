@@ -15,9 +15,9 @@ public static class ProductEnpoints
             .WithTags("Products")
             .RequireAuthorization("Common");
 
-        group.MapGet("/", async (IProductInterface productService, [AsParameters] ProductFilterDto filter) =>
+        group.MapGet("/", async (IProductInterface productService, ClaimsPrincipal user, [AsParameters] ProductFilterDto filter) =>
             {
-                var result = await productService.GetAllProductAsync(filter);
+                var result = await productService.GetAllProductAsync(filter, user);
                 return result;
             }).WithName("Products")
             .WithSummary("Retorna uma lista de produtos")
