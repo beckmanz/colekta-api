@@ -67,4 +67,11 @@ public class ProductRepository : IProductRepository
 
         return result;
     }
+
+    public async Task<ProductModel> UpdateProductAsync(ProductModel product)
+    {
+        _context.Products.Update(product);
+        return await _context.SaveChangesAsync()
+            .ContinueWith(t => product);
+    }
 }

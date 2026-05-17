@@ -117,4 +117,39 @@ public class ProductService : IProductInterface
         
         return productDto.ToOkResult("Produto buscado com sucesso!");
     }
+
+    public async Task<IResult> UpdateProductAsync(Guid id, UpdateProductDto productDto, ClaimsPrincipal userClaims)
+    {
+        var product = await _productRepository.GetProductByIdAsync(id);
+        if (product is null) 
+        {
+            return Results.NotFound("Produto não encontrado.");
+        }
+
+        var userId = userClaims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        bool isAdminOrCreator = userClaims.IsInRole("Admin") || userClaims.IsInRole("Creator");
+
+        if (!isAdminOrCreator && product.SellerId != userId)
+        {
+            return "Você não tem permissão para alterar este produto.".ToForbiddenResult();
+        }
+        
+        var category = await _categoryRepository.GetByIdAsync(product.CategoryId);
+
+        if (category is null)
+        {
+            return "Categoria não encontrada!".ToBadRequestResult();
+        }
+
+        if (productDto.Nome != null) product.Name = productDto.Nome;
+        if (productDto.Descricao != null) product.Description = productDto.Descricao;
+        if (productDto.Preco.HasValue) product.Price = productDto.Preco.Value;
+        if (productDto.Estoque.HasValue) product.Stock = productDto.Estoque.Value;
+        if (productDto.CategoriaId != null) product.CategoryId = category.Id;
+        
+        var response = ProductResponseDto.ToDto(await _productRepository.UpdateProductAsync(product));
+        
+        return response.ToOkResult("Produto atualizado com sucesso!");
+    }
 }

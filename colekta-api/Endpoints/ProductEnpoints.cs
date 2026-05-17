@@ -40,11 +40,27 @@ public static class ProductEnpoints
         {
             var result = await productService.GetProductById(Id);
             return result;
-        }).DisableAntiforgery().WithName("GetProductById")
-        .WithSummary("Retorna um produto por ID")
-        .WithDescription(
+        }).DisableAntiforgery()
+            .WithName("GetProductById")
+            .WithSummary("Retorna um produto por ID")
+            .WithDescription(
             "Retorna um produto com base no ID fornecido. O ID deve ser um GUID válido.")
-        .AllowAnonymous();
+            .AllowAnonymous();
+
+        group.MapPut("/{id:guid}", async (
+                Guid id,
+                UpdateProductDto dto,
+                ClaimsPrincipal user,
+                IProductInterface productService) =>
+            {
+                var result = await productService.UpdateProductAsync(id, dto, user);
+                return result;
+            })
+            .AddEndpointFilter<ValidationFilter<UpdateProductDto>>()
+            .WithName("UpdateProduct")
+            .WithSummary("Atualizar um produto")
+            .WithDescription(
+                "Atualiza um produto existente com base no ID fornecido.");
 
     }
 }

@@ -9,4 +9,5 @@ public interface IProductRepository
     IQueryable<ProductModel> GetAllProductsQuery(ProductFilterDto filters, bool includeDeleted);
     Task<ProductModel> CreateProductAsync(ProductModel product);
     Task<ProductModel> GetProductByIdAsync(Guid Id);
+    Task<ProductModel> UpdateProductAsync(ProductModel product);
 }

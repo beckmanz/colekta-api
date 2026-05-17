@@ -9,4 +9,5 @@ public interface IProductInterface
     Task<IResult> GetAllProductAsync(ProductFilterDto filter, ClaimsPrincipal userClaims);
     Task<IResult> CreateProductAsync(CreateProductDto dto, ClaimsPrincipal userClaims);
     Task<IResult> GetProductById(Guid Id);
+    Task<IResult> UpdateProductAsync(Guid id, UpdateProductDto productDto, ClaimsPrincipal userClaims);
 }
