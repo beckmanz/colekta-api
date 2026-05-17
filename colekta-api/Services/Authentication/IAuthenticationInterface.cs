@@ -9,4 +9,5 @@ public interface IAuthenticationInterface
     Task<(IResult Result, string? Token)> RegisterUserAsync(RegisterDto registerDto);
     Task<(IResult Result, string? Token)> LoginUserAsync(LoginDto loginDto);
     Task<IResult> GetCurrentUserAsync(ClaimsPrincipal userClaims);
+    Task<IResult> CompleteProfileAsync(ClaimsPrincipal userClaims, CompleteProfileDto completeProfileDto);
 }

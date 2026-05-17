@@ -116,4 +116,46 @@ public class AuthenticationService : IAuthenticationInterface
         
         return response.ToOkResult();
     }
+
+    public async Task<IResult> CompleteProfileAsync(ClaimsPrincipal userClaims, CompleteProfileDto completeProfileDto)
+    {
+        var userId = userClaims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (userId is null)
+        {
+            return "".ToUnauthorizedResult();
+        }
+        
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user is null)
+        {
+            return "".ToUnauthorizedResult();
+        }
+
+        await _userManager.UpdateAsync(user);
+        
+        var userRoles = await _userManager.GetRolesAsync(user);
+        
+        if (userRoles.Contains("Cliente"))
+        {
+            await _userManager.RemoveFromRoleAsync(user, "Cliente");
+        }
+
+        if (!userRoles.Contains("Vendedor") || !userRoles.Contains("Creator"))
+        {
+            await _userManager.AddToRoleAsync(user, "Vendedor");
+        }
+
+        user.Cpf = completeProfileDto.Cpf;
+        user.PhoneNumber = completeProfileDto.Telefone;
+        await _userManager.UpdateAsync(user);
+        
+        userRoles = await _userManager.GetRolesAsync(user);
+        
+        var response = AuthResponseDto.ToAuthResponseDto(user);
+        response.Roles = userRoles.ToList();
+        
+        return response.ToOkResult("Perfil atualizado com sucesso!");
+    }
 }

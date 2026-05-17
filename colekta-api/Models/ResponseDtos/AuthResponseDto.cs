@@ -10,6 +10,7 @@ public class AuthResponseDto
     public List<string>? Roles { get; set; }
     public string cpf { get; set; }
     public string Email { get; set; }
+    public string Telefone { get; set; }
     
     public static AuthResponseDto ToAuthResponseDto(ApplicationUserModel user)
     {
@@ -19,7 +20,8 @@ public class AuthResponseDto
             NomeCompleto = user.FullName,
             UserName = user.UserName ?? string.Empty,
             cpf = user.Cpf ?? string.Empty,
-            Email = user.Email ?? string.Empty
+            Telefone = user.PhoneNumber ?? string.Empty,
+            Email = user.Email ?? string.Empty,
         };
     }
 }

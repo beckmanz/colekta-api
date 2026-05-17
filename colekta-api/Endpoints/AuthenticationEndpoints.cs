@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using colekta_api.Filters;
 using colekta_api.Models.RequestDtos;
 using colekta_api.Services.Authentication;
 using colekta_api.Services.Token;
@@ -11,7 +12,8 @@ public static class AuthenticationEndpoints
     public static void MapAuthenticationEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/auth")
-            .WithTags("Authentication");
+            .WithTags("Authentication")
+            .RequireAuthorization();
         
         group.MapPost("register", async (
             [FromBody] RegisterDto request,
@@ -26,6 +28,7 @@ public static class AuthenticationEndpoints
             }
             return result;
         }).WithName("Register")
+        .AllowAnonymous()
         .WithSummary("Registra um novo usuário")
         .WithDescription("Cria um novo usuário na plataforma e retorna um token de autenticação via cookie.");
         
@@ -42,6 +45,7 @@ public static class AuthenticationEndpoints
             }
             return result;
         }).WithName("Login")
+        .AllowAnonymous()
         .WithSummary("Loga um usuário")
         .WithDescription("Faz o login de um usuário na plataforma e retorna um token de autenticação via cookie.");
 
@@ -62,5 +66,17 @@ public static class AuthenticationEndpoints
         }).WithName("Logout")
         .WithSummary("Realiza logout do usuário")
         .WithDescription("Remove o cookie de autenticação para efetuar o logout do usuário.");
+
+        group.MapPut("",
+                async ([FromBody] CompleteProfileDto completeProfileDto,
+                    IAuthenticationInterface authInterface,
+                    ClaimsPrincipal userClaims) =>
+                {
+                    var result = await authInterface.CompleteProfileAsync(userClaims, completeProfileDto);
+                    return result;
+                }).AddEndpointFilter<ValidationFilter<CompleteProfileDto>>()
+            .WithName("CompleteProfile")
+            .WithSummary("Completa o perfil do usuário")
+            .WithDescription("Permite que o usuário complete seu perfil com informações adicionais.");
     }
 }
