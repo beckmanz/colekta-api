@@ -62,5 +62,18 @@ public static class ProductEnpoints
             .WithDescription(
                 "Atualiza um produto existente com base no ID fornecido.");
 
+        group.MapDelete("/{id:guid}", async (
+                Guid id,
+                ClaimsPrincipal user,
+                IProductInterface productService) =>
+            {
+                var result = await productService.SoftDeleteProductAsync(id, user);
+                return result;
+            }).DisableAntiforgery()
+            .WithName("DeleteProduct")
+            .WithSummary("Remover um produto")
+            .WithDescription(
+                "Realiza a exclusão lógica de um produto com base no ID fornecido. O produto não será removido fisicamente do banco de dados, mas será marcado como excluído.");
+
     }
 }

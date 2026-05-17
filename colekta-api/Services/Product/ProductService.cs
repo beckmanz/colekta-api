@@ -152,4 +152,28 @@ public class ProductService : IProductInterface
         
         return response.ToOkResult("Produto atualizado com sucesso!");
     }
+
+    public async Task<IResult> SoftDeleteProductAsync(Guid id, ClaimsPrincipal user)
+    {
+        var product = await _productRepository.GetProductByIdAsync(id);
+        
+        if (product is null || product.IsDelete) 
+        {
+            return "Produto não encontrado ou já removido.".ToNotFoundResult();
+        }
+
+        var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        bool isAdminOrCreator = user.IsInRole("Admin") || user.IsInRole("Creator");
+
+        if (!isAdminOrCreator && product.SellerId != userId)
+        {
+            return "Você não tem permissão para deletar este produto.".ToForbiddenResult();
+        }
+
+        product.IsDelete = true;
+
+        await _productRepository.UpdateProductAsync(product);
+
+        return "".ToOkResult("Produto removido com sucesso.");
+    }
 }

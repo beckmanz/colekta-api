@@ -10,4 +10,5 @@ public interface IProductInterface
     Task<IResult> CreateProductAsync(CreateProductDto dto, ClaimsPrincipal userClaims);
     Task<IResult> GetProductById(Guid Id);
     Task<IResult> UpdateProductAsync(Guid id, UpdateProductDto productDto, ClaimsPrincipal userClaims);
+    Task<IResult> SoftDeleteProductAsync(Guid id, ClaimsPrincipal user);
 }
