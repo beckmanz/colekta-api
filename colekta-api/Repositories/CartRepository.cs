@@ -28,4 +28,23 @@ public class CartRepository : ICartRepository
         
         return result;
     }
+    
+    public async Task<ProductModel?> GetProductForCartAsync(Guid productId)
+    {
+        return await _context.Products
+            .Where(p => p.Id == productId && !p.IsDelete)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task CreateCartAsync(CartModel cart)
+    {
+        await _context.Carts.AddAsync(cart);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task UpdateCartAsync(CartModel cart)
+    {
+        _context.Carts.Update(cart);
+        await _context.SaveChangesAsync();
+    }
 }
