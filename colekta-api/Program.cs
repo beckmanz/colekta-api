@@ -6,6 +6,7 @@ using colekta_api.Models.Entities;
 using colekta_api.Repositories;
 using colekta_api.Repositories.Interfaces;
 using colekta_api.Services.Authentication;
+using colekta_api.Services.Cart;
 using colekta_api.Services.Category;
 using colekta_api.Services.File;
 using colekta_api.Services.Product;
@@ -43,6 +44,8 @@ builder.Services.AddScoped<ICategoryInterface, CategoryService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IFileInterface, FileService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<ICartInterface, CartService>();
 
 var app = builder.Build();
 if (!app.Environment.IsDevelopment())
@@ -59,5 +62,6 @@ app.UseAuthorization();
 app.MapAuthenticationEndpoints();
 app.MapProductEndpoints();
 app.MapCategoryEndpoints();
+app.MapCartEndpoints();
 app.UseHttpsRedirection();
 app.Run();
