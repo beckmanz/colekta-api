@@ -54,6 +54,11 @@ public static class ScalarExtensions
                         Name = "Categories", 
                         Description = "Endpoints relacionados à gestão de categorias, incluindo listagem, detalhes, criação, atualização e exclusão de categorias." 
                     },
+                    new OpenApiTag
+                    {
+                        Name = "Cart", 
+                        Description = "Endpoints relacionados ao carrinho de compras, incluindo visualização do carrinho, adição e remoção de itens, e finalização de compra."
+                    },
                     
                 };
 

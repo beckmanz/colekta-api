@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using colekta_api.Filters;
+using colekta_api.Models.RequestDtos;
 using colekta_api.Services.Cart;
 
 namespace colekta_api.Endpoints;
@@ -19,5 +21,14 @@ public static class CartEndpoints
         }).WithName("GetUserCart")
         .WithSummary("Retorna o carrinho do usuário autenticado")
         .WithDescription("Retorna o carrinho de compras do usuário atualmente autenticado, incluindo os itens adicionados, quantidades e preços totais.");
+
+        group.MapPost("", async (AddCartItemDto dto, ICartInterface cartInterface, ClaimsPrincipal userClaims) =>
+        {
+            var result = await cartInterface.AddItemToCartAsync(userClaims, dto);
+            return result;
+        }).AddEndpointFilter<ValidationFilter<AddCartItemDto>>()
+            .WithName("AddItemToCart")
+            .WithSummary("Adiciona um item ao carrinho do usuário autenticado")
+            .WithDescription("Adiciona um item ao carrinho de compras do usuário atualmente autenticado");
     }
 }
